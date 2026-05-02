@@ -9,24 +9,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validate = void 0;
+exports.validateHeaders = exports.validateQuery = exports.validateParams = exports.validateBody = void 0;
 const zod_1 = require("zod");
 const AppError_1 = require("../utils/AppError");
-const validate = (schema) => (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const validateRequest = (schema, source) => (req, _res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield schema.parseAsync({
-            body: req.body,
-            query: req.query,
-            params: req.params,
-        });
+        // Validate the specific part of the request
+        const validated = yield schema.parseAsync(req[source] || {});
+        // Replace the original data with the validated data (to handle defaults/transforms)
+        req[source] = validated;
         return next();
     }
     catch (error) {
         if (error instanceof zod_1.ZodError) {
-            const message = error.issues.map((e) => e.message).join(', ');
+            const issue = error.issues[0];
+            const message = `${issue.message}`;
             return next(new AppError_1.AppError(message, 400));
         }
         return next(error);
     }
 });
-exports.validate = validate;
+const validateBody = (schema) => validateRequest(schema, 'body');
+exports.validateBody = validateBody;
+const validateParams = (schema) => validateRequest(schema, 'params');
+exports.validateParams = validateParams;
+const validateQuery = (schema) => validateRequest(schema, 'query');
+exports.validateQuery = validateQuery;
+const validateHeaders = (schema) => validateRequest(schema, 'headers');
+exports.validateHeaders = validateHeaders;

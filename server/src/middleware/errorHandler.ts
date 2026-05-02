@@ -29,13 +29,18 @@ export const errorHandler = (
     message = Object.values((err as any).errors).map((val: any) => val.message).join(', ');
   }
 
+  // Handle MongoDB Connection Error (when DB goes down)
+  if (err.name === 'MongoServerSelectionError') {
+    statusCode = 503;
+    message = 'Database connection lost. Please try again later.';
+  }
+
   res.status(statusCode).json({
     status: 'error',
     statusCode: 1,
-    statusDesc: message, // Always show human-friendly message
-    // Only show technical details in development mode
+    statusDesc: message,
     ...(env.NODE_ENV === 'development' && {
-      actualError: err.message,
+      actualError: (err as AppError).actualError || err.message,
       stack: err.stack,
     }),
   });

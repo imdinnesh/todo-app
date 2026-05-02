@@ -22,10 +22,18 @@ app.use(express_1.default.json({ limit: '10kb' })); // Body parser
 if (env_1.env.NODE_ENV === 'development') {
     app.use((0, morgan_1.default)('dev')); // Logging
 }
+// Health Check
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        status: 'success',
+        statusCode: 0,
+        statusDesc: 'Healthy',
+    });
+});
 // 3) ROUTES
 app.use('/api/v1/auth', auth_routes_1.default);
 // Handle undefined routes
-app.all('*', (req, res, next) => {
+app.all('*path', (req, res, next) => {
     next(new AppError_1.AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 // 4) GLOBAL ERROR HANDLER

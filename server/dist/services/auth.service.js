@@ -6,8 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.signToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const env_1 = require("../config/env");
-const signToken = (id) => {
-    return jsonwebtoken_1.default.sign({ id }, env_1.env.JWT_SECRET, {
+const signToken = (reqBody) => {
+    return jsonwebtoken_1.default.sign({
+        mobileNo: reqBody.mobileNo,
+        role: reqBody.role
+    }, env_1.env.JWT_SECRET, {
         expiresIn: env_1.env.JWT_EXPIRES_IN,
     });
 };

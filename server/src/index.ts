@@ -6,6 +6,7 @@ import { env } from './config/env';
 import { connectDB } from './config/db';
 import { errorHandler } from './middleware/errorHandler';
 import authRoutes from './routes/auth.routes';
+import taskRoutes from './routes/task.routes';
 import { AppError } from './utils/AppError';
 
 const app = express();
@@ -32,6 +33,7 @@ app.get('/health', (req, res) => {
 
 // 3) ROUTES
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/tasks', taskRoutes);
 
 // Handle undefined routes
 app.all('*path', (req, res, next) => {

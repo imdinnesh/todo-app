@@ -47,7 +47,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const argon2_1 = __importDefault(require("argon2"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const userSchema = new mongoose_1.Schema({
     name: {
         type: String,
@@ -60,6 +60,11 @@ const userSchema = new mongoose_1.Schema({
         unique: true,
         lowercase: true,
         trim: true,
+    },
+    mobileNo: {
+        type: String,
+        required: [true, 'Please provide your mobile number'],
+        match: [/^\d{10}$/, 'Mobile Number must be exactly 10 digits'],
     },
     password: {
         type: String,
@@ -81,7 +86,8 @@ userSchema.pre('save', function () {
         if (!this.isModified('password'))
             return;
         try {
-            this.password = yield argon2_1.default.hash(this.password);
+            const salt = yield bcryptjs_1.default.genSalt(12);
+            this.password = yield bcryptjs_1.default.hash(this.password, salt);
         }
         catch (err) {
             throw err;
@@ -91,7 +97,7 @@ userSchema.pre('save', function () {
 // Method to compare password
 userSchema.methods.comparePassword = function (candidatePassword) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield argon2_1.default.verify(this.password, candidatePassword);
+        return yield bcryptjs_1.default.compare(candidatePassword, this.password);
     });
 };
 exports.User = mongoose_1.default.model('User', userSchema);

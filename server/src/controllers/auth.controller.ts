@@ -16,6 +16,14 @@ export const signUp = async (
 ) => {
   const { name, email, password,mobileNo,role } = req.body;
 
+  const existingUser = await User.findOne({ email });
+
+  if (existingUser) {
+    return next(new AppError('User already exists', 400));
+  }
+
+  
+
   await User.create({
     name,
     email,
@@ -43,7 +51,7 @@ export const login = async (
 ) => {
   const { email, password } = req.body;
 
-  // Check if the user exists (explicitly select password)
+  // Check if the user exists
   const existingUser = await User.findOne({ email }).select('+password');
 
   if (!existingUser) {
@@ -57,9 +65,6 @@ export const login = async (
   }
 
   const token = signToken({
-    name: existingUser.name,
-    email: existingUser.email,
-    password: '', 
     mobileNo: existingUser.mobileNo,
     role: existingUser.role
   });
