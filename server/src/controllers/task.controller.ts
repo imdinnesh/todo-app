@@ -33,3 +33,23 @@ export const createTask = async (req: Request<{}, {}, CreateTaskInput>, res: Res
         next(error);
     }
 }
+
+export const getTasks = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const mobileNo = req.tokenProperties?.mobileNo;
+
+        if (!mobileNo) {
+            return next(new AppError("User not authenticated", 401));
+        }
+
+        const tasks = await Task.find({ mobileNo }).sort({ createdAt: -1 });
+
+        res.status(200).json({
+            status: "success",
+            statusCode: 0,
+            tasks
+        });
+    } catch (error) {
+        next(error);
+    }
+}
