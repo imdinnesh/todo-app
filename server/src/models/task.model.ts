@@ -1,27 +1,26 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface ITask extends Document {
+export interface TaskDocument extends Document {
   title: string;
-  description: string;
-  mobileNo:string;
-  currentDate:string;
-  expiryDate:string;
+  description?: string;
+  mobileNo: string;
+  currentDate: string;
+  endDate: string;
   status: 'pending' | 'completed';
 }
 
-const taskSchema = new Schema<ITask>(
+const taskSchema = new Schema<TaskDocument>(
   {
     title: {
       type: String,
       required: [true, 'Please provide your title'],
       trim: true,
-      maxLength:[100,'Title must be at most 100 characters']
+      maxLength: [100, 'Title must be at most 100 characters']
     },
     description: {
       type: String,
-      required: [true, 'Please provide your description'],
       trim: true,
-      maxLength:[200,'Description must be at most 200 characters']
+      maxLength: [200, 'Description must be at most 200 characters']
     },
     mobileNo: {
       type: String,
@@ -32,9 +31,9 @@ const taskSchema = new Schema<ITask>(
       type: String,
       required: [true, 'Please provide your current date'],
     },
-    expiryDate: {
+    endDate: {
       type: String,
-      required: [true, 'Please provide your expiry date'],
+      required: [true, 'Please provide your end date'],
     },
     status: {
       type: String,
@@ -47,4 +46,4 @@ const taskSchema = new Schema<ITask>(
   }
 );
 
-export const Task = mongoose.model<ITask>('Task', taskSchema);
+export const TaskModel = mongoose.model<TaskDocument>('Task', taskSchema);

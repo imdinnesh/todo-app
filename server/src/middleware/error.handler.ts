@@ -1,46 +1,44 @@
 import { Request, Response, NextFunction } from 'express';
-import { AppError } from '../utils/AppError';
+import { ApiError } from '../utils/api.error';
 import { env } from '../config/env';
 
 export const errorHandler = (
-  err: Error | AppError,
+  err: Error | ApiError,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  let statusCode = 500;
+  let httpStatus = 500;
+  let internalCode = 1;
   let message = 'Something went wrong';
 
-  if (err instanceof AppError) {
-    statusCode = err.statusCode;
+  if (err instanceof ApiError) {
+    httpStatus = err.httpStatus;
+    internalCode = err.statusCode;
     message = err.message;
   }
 
   // Handle Mongoose Duplicate Key Error
   if ((err as any).code === 11000) {
-    statusCode = 400;
+    httpStatus = 400;
+    internalCode = 1;
     const field = Object.keys((err as any).keyValue)[0];
     message = `${field.charAt(0).toUpperCase() + field.slice(1)} already exists`;
   }
 
   // Handle Mongoose Validation Error
   if (err.name === 'ValidationError') {
-    statusCode = 400;
+    httpStatus = 400;
+    internalCode = 1;
     message = Object.values((err as any).errors).map((val: any) => val.message).join(', ');
   }
 
-  // Handle MongoDB Connection Error (when DB goes down)
-  if (err.name === 'MongoServerSelectionError') {
-    statusCode = 503;
-    message = 'Database connection lost. Please try again later.';
-  }
-
-  res.status(statusCode).json({
+  res.status(httpStatus).json({
     status: 'error',
-    statusCode: 1,
+    statusCode: internalCode,
     statusDesc: message,
     ...(env.NODE_ENV === 'development' && {
-      actualError: (err as AppError).actualError || err.message,
+      actualError: (err as ApiError).actualError || err.message,
       stack: err.stack,
     }),
   });
