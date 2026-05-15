@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError, ZodTypeAny } from 'zod';
-import { ApiError } from '../utils/api.error';
+import { BadRequestError } from '../utils/api.error';
 
 const validateRequest = (schema: ZodTypeAny, source: 'body' | 'params' | 'query' | 'headers') =>
   async (req: Request, _res: Response, next: NextFunction) => {
@@ -12,7 +12,7 @@ const validateRequest = (schema: ZodTypeAny, source: 'body' | 'params' | 'query'
       if (error instanceof ZodError) {
         const issue = error.issues[0];
         const message = `${issue.message}`;
-        return next(new ApiError(message, 1, 400));
+        return next(new BadRequestError(message));
       }
       return next(error);
     }

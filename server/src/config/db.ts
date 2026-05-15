@@ -7,7 +7,9 @@ import { env } from './env';
  */
 export const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(env.MONGO_URI);
+    const conn = await mongoose.connect(env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000, // Timeout after 5 seconds instead of 30
+    });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.log("Connection to the MongoDB failed")

@@ -1,22 +1,50 @@
+import { Response } from 'express';
+
 /**
- * Standardized API Response class.
- * Used to ensure all successful responses follow the same structure.
+ * Base class for all success responses.
  */
-export class ApiResponse<T = any> {
-    public readonly status: 'success' | 'error';
+export class SuccessResponse<T = any> {
+    constructor(
+        public readonly statusDesc: string,
+        public readonly data?: T,
+        public readonly statusCode: number = 0
+    ) {}
 
     /**
-     * @param statusCode - Internal status code (0 for success, 1 for error)
-     * @param httpStatus - HTTP status code (e.g., 200, 201)
-     * @param statusDesc - Descriptive message or status string
-     * @param data - Optional payload to return to the client
+     * Sends the response to the client.
      */
-    constructor(
-        public readonly statusCode: number,
-        public readonly httpStatus: number,
-        public readonly statusDesc: string,
-        public readonly data?: T
-    ) {
-        this.status = statusCode === 0 ? 'success' : 'error';
+    send(res: Response, httpStatus: number = 200) {
+        return res.status(httpStatus).json({
+            status: 'success',
+            statusCode: this.statusCode,
+            statusDesc: this.statusDesc,
+            ...(this.data !== undefined && { data: this.data })
+        });
+    }
+}
+
+/**
+ * 200 OK Response
+ */
+export class OkResponse<T = any> extends SuccessResponse<T> {
+    constructor(statusDesc: string = "Success", data?: T) {
+        super(statusDesc, data);
+    }
+
+    send(res: Response) {
+        return super.send(res, 200);
+    }
+}
+
+/**
+ * 201 Created Response
+ */
+export class CreatedResponse<T = any> extends SuccessResponse<T> {
+    constructor(statusDesc: string = "Created successfully", data?: T) {
+        super(statusDesc, data);
+    }
+
+    send(res: Response) {
+        return super.send(res, 201);
     }
 }

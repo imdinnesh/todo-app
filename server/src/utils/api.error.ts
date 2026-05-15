@@ -22,11 +22,47 @@ export class ApiError extends Error {
         this.isOperational = true;
 
         // Ensure the prototype chain is correctly set (needed for custom errors in TS)
-        Object.setPrototypeOf(this, ApiError.prototype);
+        Object.setPrototypeOf(this, new.target.prototype);
 
         // Capture stack trace, excluding the constructor from the trace
         if (Error.captureStackTrace) {
             Error.captureStackTrace(this, this.constructor);
         }
+    }
+}
+
+export class BadRequestError extends ApiError {
+    constructor(message: string = "Bad Request", actualError?: string) {
+        super(message, 1, 400, actualError);
+    }
+}
+
+export class UnauthorizedError extends ApiError {
+    constructor(message: string = "Unauthorized", actualError?: string) {
+        super(message, 1, 401, actualError);
+    }
+}
+
+export class ForbiddenError extends ApiError {
+    constructor(message: string = "Forbidden", actualError?: string) {
+        super(message, 1, 403, actualError);
+    }
+}
+
+export class NotFoundError extends ApiError {
+    constructor(message: string = "Not Found", actualError?: string) {
+        super(message, 1, 404, actualError);
+    }
+}
+
+export class InternalServerError extends ApiError {
+    constructor(message: string = "Internal Server Error", actualError?: string) {
+        super(message, 1, 500, actualError);
+    }
+}
+
+export class DatabaseConnectivityError extends ApiError {
+    constructor(message: string = "Database is busy or unreachable. Please try again later.", actualError?: string) {
+        super(message, 1, 503, actualError);
     }
 }

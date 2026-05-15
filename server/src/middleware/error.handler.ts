@@ -33,6 +33,12 @@ export const errorHandler = (
     message = Object.values((err as any).errors).map((val: any) => val.message).join(', ');
   }
 
+  // GLOBAL FALLBACK: Handle database errors that bypassed the repository mapper
+  if (err.name === 'MongoServerSelectionError' || err.name === 'MongoNetworkError' || err.message.includes('timeout')) {
+    httpStatus = 503;
+    message = 'Database is busy or unreachable. Please try again later.';
+  }
+
   res.status(httpStatus).json({
     status: 'error',
     statusCode: internalCode,
