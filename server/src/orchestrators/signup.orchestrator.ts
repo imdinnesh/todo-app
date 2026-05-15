@@ -1,6 +1,7 @@
 import { EmailService } from "../interfaces/email.interface";
 import { PaymentService } from "../interfaces/payment.interface";
 import { AuthService } from "../services/auth.service";
+import { SignUpInput } from "../validators/auth.validator";
 
 export class SignupOrchestrator {
     constructor(
@@ -9,7 +10,7 @@ export class SignupOrchestrator {
         private paymentService: PaymentService
     ) { }
 
-    async execute(userData: any) {
+    async execute(userData: SignUpInput) {
         // Register User
         const newUser = await this.authService.signup(userData);
 

@@ -5,6 +5,7 @@ import { errorHandler } from "./middleware/error.handler";
 import { env } from "./config/env";
 import { OkResponse } from "./utils/api.response";
 import { authRouter } from "./routes/auth.route";
+import { taskRoute } from "./routes/task.route";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.get("/health", (_req, res) => {
 
 //===ROUTERS===
 app.use("/api/v1/auth", authRouter)
+app.use("/api/v1/tasks", taskRoute)
 
 
 

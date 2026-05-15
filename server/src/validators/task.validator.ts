@@ -1,15 +1,23 @@
 import z from "zod";
 
-// ---- Schemas
+//===SCHEMAS===
 export const createTaskSchema = z.object({
-  title: z.string(),
-
-  description: z.string().optional(),
-
-  endDate: z.coerce.date(),
-
-  status: z.enum(["pending", "completed"]).optional().default("pending"),
+  title: z.string({
+    error: (issue) => issue.input === undefined ? 'Title is required' : 'Invalid type'
+  }),
+  description: z.string({
+    error: (issue) => issue.input === undefined ? 'Description is required' : 'Invalid type'
+  }).optional(),
+  endDate: z.string({
+    error: (issue) =>
+      issue.input === undefined
+        ? "End Date is required"
+        : "Invalid type",
+  }),
+  status: z.enum(["pending", "completed"], {
+    error: (issue) => issue.input === undefined ? 'Status is required' : 'Invalid type'
+  }).default("pending").optional(),
 });
 
-// ---- Types
-export type TCreateTask = z.infer<typeof createTaskSchema>;
+//===TYPES===
+export type CreateTaskInput = z.infer<typeof createTaskSchema>;
