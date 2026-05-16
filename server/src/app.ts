@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { NotFoundError } from "./utils/api.error";
 import { errorHandler } from "./middleware/error.handler";
 import { OkResponse } from "./utils/api.response";
@@ -8,8 +9,13 @@ import { taskRoute } from "./routes/task.route";
 export const app = express();
 
 //===MIDDLEWARES===
+app.use(cors({
+    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 //===HEATHCHECK ROUTE===
 app.get("/health", (_req, res) => {
