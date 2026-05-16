@@ -1,8 +1,8 @@
-import { UserRepository } from "../repositories/user.repository";
-import { AuthService } from "../services/auth.service";
-import { TokenService } from "../services/token.service";
-import { LoginInput } from "../validators/auth.validator";
-import { UnauthorizedError } from "../utils/api.error";
+import { UserRepository } from "../../repositories/user.repository";
+import { AuthService } from "../../services/auth.service";
+import { TokenService } from "../../services/token.service";
+import { LoginInput } from "../../validators/auth.validator";
+import { UnauthorizedError } from "../../utils/api.error";
 
 export class LoginUseCase {
     constructor(
@@ -28,9 +28,9 @@ export class LoginUseCase {
             role: user.role
         });
 
-        const userObj = user.toObject ? user.toObject() : user;
-        delete userObj.password;
+        // Remove password from the entity before returning
+        const { password, ...userWithoutPassword } = user;
 
-        return { user: userObj, token };
+        return { user: userWithoutPassword, token };
     }
 }

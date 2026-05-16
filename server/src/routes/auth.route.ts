@@ -6,11 +6,11 @@ import { StripePaymentService } from '../services/payment.service';
 import { MongoUserRepository } from '../repositories/user.repository';
 import { BcryptHasher } from '../utils/hasher';
 import { JwtTokenService } from '../services/token.service';
-import { SignupUseCase } from '../use-cases/signup.use-case';
-import { LoginUseCase } from '../use-cases/login.use-case';
+import { LoginUseCase } from '../use-cases/auth/login.use-case';
 import { asyncHandler } from '../utils/api.handler';
 import { validateBody } from '../middleware/request.validator';
 import { signUpSchema, loginSchema } from '../validators/auth.validator';
+import { SignupUseCase } from '../use-cases/auth/signup.use-case';
 
 export const authRouter = Router();
 

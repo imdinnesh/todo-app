@@ -1,13 +1,15 @@
 import { Router } from "express";
 import { MongoTaskRepository } from "../repositories/task.repository";
 import { TaskController } from "../controller/task.controller";
-import { CreateTaskUseCase } from "../use-cases/create-task.use-case";
+import { CreateTaskUseCase } from "../use-cases/task/create-task.use-case";
 import { validateBody } from "../middleware/request.validator";
 import { createTaskSchema } from "../validators/task.validator";
 import { JwtTokenService } from "../services/token.service";
 import { asyncHandler } from "../utils/api.handler";
-import { authenticate } from "../middleware/authenticate.middleware";
 import { ClockService } from "../services/time.service";
+import { authentication } from "../middleware/authenticate.middleware";
+import { authorisation } from "../middleware/authorisation.middleware";
+import { FetchTasksUseCase } from "../use-cases/task/fetch-task.use-case";
 
 export const taskRoute = Router()
 
@@ -18,14 +20,29 @@ const timeService = new ClockService();
 
 // Use Cases
 const createTaskUseCase = new CreateTaskUseCase(taskRepository, timeService);
+const fetchTasksUseCase = new FetchTasksUseCase(taskRepository);
 
 // Controller
-const taskController = new TaskController(createTaskUseCase);
+const taskController = new TaskController(createTaskUseCase, fetchTasksUseCase);
 
 //===ROUTES===
 taskRoute.post(
     '/create',
-    authenticate(tokenService), 
-    validateBody(createTaskSchema), 
+    authentication(tokenService),
+    validateBody(createTaskSchema),
     asyncHandler(taskController.createTask)
+);
+
+taskRoute.get(
+    '/fetch',
+    authentication(tokenService),
+    authorisation('admin', 'user'),
+    asyncHandler(taskController.fetchTasksByMobileNo)
+);
+
+taskRoute.get(
+    '/fetch/all',
+    authentication(tokenService),
+    authorisation('admin'),
+    asyncHandler(taskController.fetchAllTasks)
 );

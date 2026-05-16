@@ -1,6 +1,6 @@
-import { TaskRepository } from "../repositories/task.repository";
-import { CreateTaskInput } from "../validators/task.validator";
-import { TimeService } from "../services/time.service";
+import { TaskRepository } from "../../repositories/task.repository";
+import { CreateTaskInput } from "../../validators/task.validator";
+import { TimeService } from "../../services/time.service";
 
 export class CreateTaskUseCase {
     constructor(
@@ -10,7 +10,7 @@ export class CreateTaskUseCase {
 
     async execute(taskData: CreateTaskInput, mobileNo: string) {
         const currentTime = await this.timeService.getCurrentTime();
-        
+
         return await this.taskRepository.create({
             ...taskData,
             mobileNo,

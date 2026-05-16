@@ -7,7 +7,8 @@ export class SuccessResponse<T = any> {
     constructor(
         public readonly statusDesc: string,
         public readonly data?: T,
-        public readonly statusCode: number = 0
+        public readonly statusCode: number = 0,
+        public readonly length?: number
     ) {}
 
     /**
@@ -18,6 +19,7 @@ export class SuccessResponse<T = any> {
             status: 'success',
             statusCode: this.statusCode,
             statusDesc: this.statusDesc,
+            ...(this.length !== undefined && { length: this.length }),
             ...(this.data !== undefined && { data: this.data })
         });
     }
@@ -27,8 +29,8 @@ export class SuccessResponse<T = any> {
  * 200 OK Response
  */
 export class OkResponse<T = any> extends SuccessResponse<T> {
-    constructor(statusDesc: string = "Success", data?: T) {
-        super(statusDesc, data);
+    constructor(statusDesc: string = "Success", data?: T, length?: number) {
+        super(statusDesc, data, 0, length);
     }
 
     send(res: Response) {

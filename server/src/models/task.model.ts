@@ -7,6 +7,8 @@ export interface TaskDocument extends Document {
   currentDate: string;
   endDate: string;
   status: 'pending' | 'completed';
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const taskSchema = new Schema<TaskDocument>(

@@ -3,14 +3,9 @@ import { TokenService } from '../services/token.service';
 import { UnauthorizedError } from '../utils/api.error';
 import { AuthUser } from '../types/auth.types';
 
-/**
- * Middleware to authenticate requests using JWT.
- * It extracts the Bearer token, verifies it, and attaches the payload to req.user.
- */
-export const authenticate = (tokenService: TokenService) => {
+export const authentication = (tokenService: TokenService) => {
     return async (req: Request, _res: Response, next: NextFunction) => {
         try {
-            // 1. Get token from header
             const authHeader = req.headers.authorization;
             
             if (!authHeader || !authHeader.startsWith('Bearer ')) {

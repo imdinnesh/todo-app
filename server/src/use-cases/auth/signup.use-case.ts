@@ -1,9 +1,9 @@
-import { EmailService } from "../interfaces/email.interface";
-import { PaymentService } from "../interfaces/payment.interface";
-import { UserRepository } from "../repositories/user.repository";
-import { AuthService } from "../services/auth.service";
-import { SignUpInput } from "../validators/auth.validator";
-import { BadRequestError } from "../utils/api.error";
+import { EmailService } from "../../interfaces/email.interface";
+import { PaymentService } from "../../interfaces/payment.interface";
+import { UserRepository } from "../../repositories/user.repository";
+import { AuthService } from "../../services/auth.service";
+import { BadRequestError } from "../../utils/api.error";
+import { SignUpInput } from "../../validators/auth.validator";
 
 export class SignupUseCase {
     constructor(
@@ -35,9 +35,9 @@ export class SignupUseCase {
         // Send Welcome Mail
         await this.emailService.sendWelcomeEmail(newUser.email);
 
-        const userObj = newUser.toObject ? newUser.toObject() : newUser;
-        delete userObj.password;
+        // Remove password from the entity before returning
+        const { password, ...userWithoutPassword } = newUser;
 
-        return userObj;
+        return userWithoutPassword;
     }
 }

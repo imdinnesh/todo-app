@@ -19,4 +19,14 @@ export class TaskService {
         return newTask;
     }
 
+    getTasksByMobileNo = async (mobileNo:string) => {
+        const tasks = await this.taskRepository.getTasksByMobileNo(mobileNo);
+        return tasks;
+    }
+
+    getAllTasks = async () => {
+        const tasks = await this.taskRepository.getAllTasks();
+        return tasks;
+    }
+
 }

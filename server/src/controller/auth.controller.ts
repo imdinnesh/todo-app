@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import { SignupUseCase } from "../use-cases/signup.use-case";
-import { LoginUseCase } from "../use-cases/login.use-case";
+import { LoginUseCase } from "../use-cases/auth/login.use-case";
 import { CreatedResponse, SuccessResponse } from "../utils/api.response";
+import { SignupUseCase } from "../use-cases/auth/signup.use-case";
 
 export class AuthController {
     constructor(
         private signupUseCase: SignupUseCase,
         private loginUseCase: LoginUseCase
-    ) {}
+    ) { }
 
     //===SIGNUP===
     signup = async (req: Request, res: Response) => {
@@ -23,5 +23,5 @@ export class AuthController {
             user: result.user
         }).send(res);
     };
-    
+
 }

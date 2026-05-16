@@ -6,6 +6,8 @@ export interface UserDocument extends Document {
     mobileNo: string;
     password?: string;
     role: 'user' | 'admin';
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const userSchema = new Schema<UserDocument>(
