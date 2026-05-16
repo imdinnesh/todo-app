@@ -1,17 +1,17 @@
 import { Response } from "express";
-import { TaskService } from "../services/task.service";
+import { CreateTaskUseCase } from "../use-cases/create-task.use-case";
 import { CreatedResponse } from "../utils/api.response";
 import { AuthenticatedRequest } from "../types/auth.types";
 
 export class TaskController {
     constructor(
-        private taskService: TaskService
+        private createTaskUseCase: CreateTaskUseCase
     ) { }
 
     createTask = async (req: AuthenticatedRequest, res: Response) => {
         const { mobileNo } = req.user;
 
-        const newTask = await this.taskService.createTask(req.body, mobileNo);
+        const newTask = await this.createTaskUseCase.execute(req.body, mobileNo);
         new CreatedResponse("Task created successfully", newTask).send(res);
     }
 }

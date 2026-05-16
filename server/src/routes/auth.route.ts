@@ -6,7 +6,8 @@ import { StripePaymentService } from '../services/payment.service';
 import { MongoUserRepository } from '../repositories/user.repository';
 import { BcryptHasher } from '../utils/hasher';
 import { JwtTokenService } from '../services/token.service';
-import { SignupOrchestrator } from '../orchestrators/signup.orchestrator';
+import { SignupUseCase } from '../use-cases/signup.use-case';
+import { LoginUseCase } from '../use-cases/login.use-case';
 import { asyncHandler } from '../utils/api.handler';
 import { validateBody } from '../middleware/request.validator';
 import { signUpSchema, loginSchema } from '../validators/auth.validator';
@@ -21,16 +22,17 @@ const userRepository = new MongoUserRepository();
 const hasher = new BcryptHasher();
 const tokenService = new JwtTokenService();
 
-// 3. Services
-const authService = new AuthService(userRepository, hasher, tokenService);
+// 3. Services (Independent)
+const authService = new AuthService(hasher);
 const emailService = new SendGridEmailService();
 const paymentService = new StripePaymentService();
 
-// 4. Orchestrator
-const signupOrchestrator = new SignupOrchestrator(authService, emailService, paymentService);
+// 4. Use Cases
+const signupUseCase = new SignupUseCase(userRepository, authService, emailService, paymentService);
+const loginUseCase = new LoginUseCase(userRepository, authService, tokenService);
 
 // 5. Controller
-const authController = new AuthController(signupOrchestrator, authService);
+const authController = new AuthController(signupUseCase, loginUseCase);
 
 //===ROUTES===
 authRouter.post('/signup', validateBody(signUpSchema), asyncHandler(authController.signup));
