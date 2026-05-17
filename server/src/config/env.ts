@@ -11,6 +11,7 @@ const envSchema = z.object({
   JWT_EXPIRES_IN: z.string().default('1d'),
   CLIENT_URL: z.string().url(),
   GEMINI_API_KEY: z.string().min(10),
+  REDIS_URL: z.string().url().default('redis://localhost:6379'),
 });
 
 const _env = envSchema.safeParse(process.env);

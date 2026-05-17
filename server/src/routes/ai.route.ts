@@ -30,7 +30,7 @@ aiRoute.post(
     authentication(tokenService),
     rateLimiter({
         windowMs: 60 * 1000, // 1 minute window
-        max: 5,              // Limit each IP to 5 requests per windowMs
+        max: 2,              // Limit each IP to 5 requests per windowMs
         message: "You have exceeded the limit of 5 AI task parses per minute. Please try again soon."
     }),
     validateBody(parseTaskSchema),
