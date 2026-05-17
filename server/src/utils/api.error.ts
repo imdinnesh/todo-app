@@ -66,3 +66,10 @@ export class DatabaseConnectivityError extends ApiError {
         super(message, 1, 503, actualError);
     }
 }
+
+export class TooManyRequestsError extends ApiError {
+    constructor(message: string = "Too Many Requests", actualError?: string) {
+        super(message, 1, 429, actualError);
+    }
+}
+

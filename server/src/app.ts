@@ -5,6 +5,7 @@ import { errorHandler } from "./middleware/error.handler";
 import { OkResponse } from "./utils/api.response";
 import { authRouter } from "./routes/auth.route";
 import { taskRoute } from "./routes/task.route";
+import { aiRoute } from "./routes/ai.route";
 
 export const app = express();
 
@@ -25,6 +26,8 @@ app.get("/health", (_req, res) => {
 //===ROUTERS===
 app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/tasks", taskRoute)
+app.use("/api/v1/ai", aiRoute)
+
 
 //===NO ROUTE ERROR HANDLER===
 app.use((_req, _res, next) => {
