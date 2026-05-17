@@ -10,6 +10,7 @@ import { ClockService } from "../services/time.service";
 import { authentication } from "../middleware/authenticate.middleware";
 import { authorisation } from "../middleware/authorisation.middleware";
 import { FetchTasksUseCase } from "../use-cases/task/fetch-task.use-case";
+import { UpdateTaskUseCase } from "../use-cases/task/update-task.use-case";
 
 export const taskRoute = Router()
 
@@ -21,9 +22,10 @@ const timeService = new ClockService();
 // Use Cases
 const createTaskUseCase = new CreateTaskUseCase(taskRepository, timeService);
 const fetchTasksUseCase = new FetchTasksUseCase(taskRepository);
+const updateTaskUseCase = new UpdateTaskUseCase(taskRepository);
 
 // Controller
-const taskController = new TaskController(createTaskUseCase, fetchTasksUseCase);
+const taskController = new TaskController(createTaskUseCase, fetchTasksUseCase,updateTaskUseCase);
 
 //===ROUTES===
 taskRoute.post(
@@ -46,3 +48,11 @@ taskRoute.get(
     authorisation('admin'),
     asyncHandler(taskController.fetchAllTasks)
 );
+
+taskRoute.put(
+    '/update/:taskId',
+    authentication(tokenService),
+    authorisation('admin', 'user'),
+    asyncHandler(taskController.updateTask)
+);
+
