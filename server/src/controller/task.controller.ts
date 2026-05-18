@@ -36,4 +36,10 @@ export class TaskController {
         await this.updateTaskUseCase.execute(taskId, newTitle, newDescription);
         new OkResponse("Task updated successfully").send(res);
     }
+
+    fetchTaskSummaries = async (req: AuthenticatedRequest, res: Response) => {
+        const { mobileNo } = req.user;
+        const summaries = await this.fetchTasksUseCase.fetchTaskSummaries(mobileNo);
+        new OkResponse("Task summaries fetched successfully", summaries, summaries.length).send(res);
+    }
 }

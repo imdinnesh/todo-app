@@ -56,3 +56,11 @@ taskRoute.put(
     asyncHandler(taskController.updateTask)
 );
 
+taskRoute.get(
+    '/summary',
+    authentication(tokenService),
+    authorisation('admin', 'user'),
+    asyncHandler(taskController.fetchTaskSummaries)
+);
+
+

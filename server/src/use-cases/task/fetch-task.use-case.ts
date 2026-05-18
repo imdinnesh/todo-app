@@ -14,4 +14,8 @@ export class FetchTasksUseCase {
         const tasks = await this.taskRepository.getAllTasks();
         return tasks;
     }
+
+    async fetchTaskSummaries(mobileNo: string) {
+        return this.taskRepository.getTaskSummaries(mobileNo);
+    }
 }

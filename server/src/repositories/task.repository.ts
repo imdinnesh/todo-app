@@ -1,5 +1,5 @@
 import { TaskDocument, TaskModel } from "../models/task.model";
-import { Task } from "../entities/task.entity";
+import { Task, TaskSummary } from "../entities/task.entity";
 import { DatabaseErrorMapper } from "../utils/db.error.mapper";
 import { NotFoundError } from "../utils/api.error";
 
@@ -8,8 +8,9 @@ export interface TaskRepository {
     create(taskData: Partial<Task>): Promise<Task>;
     getTasksByMobileNo(mobileNo: string): Promise<Task[]>;
     getAllTasks(): Promise<Task[]>;
-    saveTask(task:Task):Promise<Task>;
-    getTaskById(id:string):Promise<Task>;
+    saveTask(task: Task): Promise<Task>;
+    getTaskById(id: string): Promise<Task>;
+    getTaskSummaries(mobileNo: string): Promise<TaskSummary[]>
 
 }
 
@@ -27,6 +28,15 @@ export class MongoTaskRepository implements TaskRepository {
             doc.updatedAt,
             doc.description
         );
+    }
+
+    private mapToSummary(doc: any): TaskSummary {
+        return {
+            id: (doc._id as any).toString(),
+            title: doc.title,
+            status: doc.status,
+            endDate: doc.endDate
+        }
     }
 
     async create(taskData: Partial<Task>): Promise<Task> {
@@ -90,4 +100,16 @@ export class MongoTaskRepository implements TaskRepository {
             throw DatabaseErrorMapper.map(error, "Failed to find task");
         }
     }
+
+    async getTaskSummaries(mobileNo: string): Promise<TaskSummary[]> {
+        try {
+            const docs = await TaskModel.find({ mobileNo })
+                .select('title status endDate')
+                .lean();
+            return docs.map(doc => this.mapToSummary(doc));
+        } catch (error: any) {
+            throw DatabaseErrorMapper.map(error, "Failed to fetch task summaries");
+        }
+    }
 }
+

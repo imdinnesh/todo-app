@@ -24,5 +24,13 @@ export class Task {
     }
 }
 
+export interface TaskSummary{
+    id: string;
+    title:string;
+    status: 'pending' | 'completed';
+    endDate:string
+}
+
+
 
 
